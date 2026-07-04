@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Kael Player",
+    "slug": "kael-player",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.kaelplayer.app",
+      "usesCleartextTraffic": true,
+      "adaptiveIcon": {
+        "backgroundColor": "#111827"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "legalDisclaimer": "O Kael Player e apenas um reprodutor de midia. O aplicativo nao fornece listas, canais ou conteudo. O usuario e responsavel pelas URLs adicionadas."
+    }
+  }
+}
