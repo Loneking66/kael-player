@@ -1,97 +1,212 @@
 # Kael Player
 
-Kael Player is a React Native/Expo media player for M3U/M3U8 URLs added manually by the user.
+> A modern React Native media player for user-provided M3U playlists and Xtream Codes compatible services.
 
-> Legal notice: Kael Player is only a media player. The app does not provide playlists, channels, movies, series, streams, or any content. The user is responsible for the URLs and media sources they add.
+Kael Player is a personal side project built to explore modern mobile development, product design, prompt engineering, and AI-assisted software development.
 
-## Status
+The application is focused on learning and experimentation while following good software engineering practices.
 
-Version target: `0.0.1` - initial functional MVP.
+---
 
-Current MVP capabilities:
+# 🚀 Features
 
-- Load user-provided M3U/M3U8 URLs.
-- Prefer Xtream Codes API when the user-provided URL exposes compatible credentials.
-- List live channels, movies, and series.
-- Filter each main section by API category, including `Todos` and `Sem categoria`.
-- Search inside each section/category.
-- Open series details, seasons, and episodes.
-- Play selected media with basic native controls.
-- Persist the last URL locally with AsyncStorage.
-- Clear the locally saved URL.
-- Show friendly errors for invalid URLs, loading failures, unsupported formats, and player failures.
+Current MVP (v0.0.1)
 
-## Technologies
+- ✅ Load user-provided M3U/M3U8 playlists
+- ✅ Automatic Xtream Codes API detection
+- ✅ Live TV support
+- ✅ Movies support
+- ✅ Series support
+- ✅ Seasons & Episodes navigation
+- ✅ Category filtering
+- ✅ Search
+- ✅ Local playlist persistence
+- ✅ Basic native video player
+- ✅ Friendly error handling
+- ✅ AsyncStorage support
 
-- Expo SDK 51
+---
+
+# 🏗️ Technologies
+
 - React Native
+- Expo SDK 51
 - TypeScript
 - React Navigation
 - Expo AV
 - Expo FileSystem
 - AsyncStorage
+- Xtream Codes API
+- M3U / M3U8 parsing
 
-## Install
+---
+
+# ⚖️ Legal Notice
+
+Kael Player is a **media player only**.
+
+This application **does not provide**:
+
+- Playlists
+- Channels
+- Movies
+- TV Series
+- Streams
+- IPTV subscriptions
+- Copyrighted content
+
+Users are solely responsible for the media sources and playlists they add.
+
+This repository contains **no real playlists, credentials, copyrighted media, or streaming sources**.
+
+---
+
+# 📦 Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/kael-player.git
+```
+
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-## Run
+Run the project:
 
 ```bash
 npx expo start --clear
 ```
 
-On Windows PowerShell, this also works:
+On Windows PowerShell:
 
-```powershell
+```bash
 npx.cmd expo start --clear
 ```
 
-Then open the app with Expo Go or an Android/iOS emulator.
+Open the application using **Expo Go** or an Android/iOS emulator.
 
-## Manual Test Checklist
+---
 
-- Add a user-owned M3U/M3U8 or compatible Xtream URL.
-- Confirm the app loads without infinite loading.
-- Open `Canais`, choose `Todos` and at least one category, then play an item.
-- Open `Filmes`, choose `Todos` and at least one category, then play an item.
-- Open `Series`, choose `Todos` and at least one category.
-- Tap a series, confirm seasons and episodes load.
-- Tap an episode and confirm it opens the player.
-- Use search inside each section.
-- Clear the saved URL in settings or home.
+# ✅ Manual Test Checklist
 
-## Privacy and Compliance
+- Load a user-owned M3U playlist
+- Load a compatible Xtream URL
+- Confirm the application loads successfully
+- Browse Live TV categories
+- Play a Live TV channel
+- Browse Movie categories
+- Play a movie
+- Browse Series categories
+- Open seasons
+- Open episodes
+- Test search
+- Clear the stored playlist URL
+- Restart the application
+- Confirm the playlist persists correctly
 
-- The project does not include real playlists, real stream URLs, channel logos, channel names, or protected media.
-- The app does not collect user data in this MVP.
-- The app does not store passwords separately or collect sensitive user data.
-- The last URL is stored only on the local device.
-- The app does not scrape websites.
-- The app does not bypass DRM.
-- Console logs mask URLs that may contain credentials.
+---
 
-## Project Structure
+# 📁 Project Structure
 
-```text
+```
 src/
-  components/
-  constants/
-  navigation/
-  screens/
-  services/
-  storage/
-  types/
-  utils/
+│
+├── components/
+├── constants/
+├── navigation/
+├── screens/
+├── services/
+├── storage/
+├── types/
+└── utils/
 ```
 
-## Next Steps
+---
 
-- Replace temporary diagnostic logs with a proper debug flag.
-- Improve player compatibility using a dedicated video package if needed.
-- Add favorites and recent items.
-- Add Android TV navigation support.
-- Add automated tests for M3U parsing and Xtream mapping with fictitious data only.
-- Prepare a production build and Play Store compliance review.
+# 📌 Project Status
+
+Current Version:
+
+**v0.0.1**
+
+Initial functional MVP.
+
+Current focus:
+
+- Stability
+- Architecture
+- Streaming support
+- Product evolution
+
+UI improvements will come in future releases.
+
+---
+
+# 🗺️ Roadmap
+
+## v0.1.0
+
+- Better UI/UX
+- Improved player controls
+- Dark Mode
+- Favorites
+- Recently Watched
+- Better buffering handling
+- Improved error messages
+
+## v0.2.0
+
+- Android TV support
+- EPG integration
+- Continue Watching
+- Playback history
+- Better performance
+
+## Future
+
+- Multi-device synchronization
+- Premium features
+- Cloud backup
+- Automated testing
+- Production release
+
+---
+
+# 🎯 Why this project?
+
+Kael Player is my personal playground for learning and experimenting with modern software development.
+
+This project allows me to improve my skills in:
+
+- Mobile Development
+- React Native
+- TypeScript
+- Product Design
+- Prompt Engineering
+- AI-assisted Development
+- Software Architecture
+- API Integrations
+- Streaming Technologies
+- Git & GitHub workflows
+- Debugging
+- Problem Solving
+
+The goal isn't to compete with existing media players.
+
+The goal is to continuously build, learn, iterate and become a better software engineer.
+
+---
+
+# 🤝 Contributing
+
+Suggestions, issues and constructive feedback are always welcome.
+
+---
+
+# 📄 License
+
+This project is licensed under the MIT License.
