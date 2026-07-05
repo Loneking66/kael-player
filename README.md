@@ -1,5 +1,9 @@
 # Kael Player
 
+> 🚧 Current Status: MVP v0.0.1
+
+![Kael Player Home](docs/screenshot-home.png)
+
 > A modern React Native media player for user-provided M3U playlists and Xtream Codes compatible services.
 
 Kael Player is a personal side project built to explore modern mobile development, product design, prompt engineering, and AI-assisted software development.
