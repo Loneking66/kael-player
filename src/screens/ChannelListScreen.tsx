@@ -1,9 +1,12 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useMemo, useState } from "react";
-import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { CategoryPill } from "../components/CategoryPill";
+import { EmptyState } from "../components/EmptyState";
 import { MediaListItem } from "../components/MediaListItem";
+import { SearchInput } from "../components/SearchInput";
 import type { MediaSection } from "../types/media";
 import { MEDIA_SECTION_LABELS } from "../types/media";
 import type { RootStackParamList } from "../types/navigation";
@@ -46,11 +49,7 @@ export function ChannelListScreen({ navigation, route }: Props) {
         return;
       }
 
-      categoryMap.set(id, {
-        id,
-        label,
-        count: 1
-      });
+      categoryMap.set(id, { id, label, count: 1 });
     });
 
     return [
@@ -95,66 +94,57 @@ export function ChannelListScreen({ navigation, route }: Props) {
 
   return (
     <SafeAreaView edges={["bottom"]} style={styles.container}>
-      <View style={styles.tabs}>
-        {SECTION_ORDER.map((section) => {
-          const isActive = section === activeSection;
+      <View style={styles.topArea}>
+        <View style={styles.tabs}>
+          {SECTION_ORDER.map((section) => {
+            const isActive = section === activeSection;
 
-          return (
-            <Pressable
-              accessibilityRole="tab"
-              key={section}
-              onPress={() => setActiveSection(section)}
-              style={[styles.tab, isActive && styles.activeTab]}
-            >
-              <Text style={[styles.tabText, isActive && styles.activeTabText]}>{MEDIA_SECTION_LABELS[section]}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
+            return (
+              <Pressable
+                accessibilityRole="tab"
+                accessibilityState={{ selected: isActive }}
+                key={section}
+                onPress={() => setActiveSection(section)}
+                style={[styles.tab, isActive && styles.activeTab]}
+              >
+                <Text style={[styles.tabText, isActive && styles.activeTabText]}>{MEDIA_SECTION_LABELS[section]}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
-      <View style={styles.searchArea}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.categoryRow}>
-            {categories.map((category) => {
-              const isActive = category.id === selectedCategory;
-
-              return (
-                <Pressable
-                  accessibilityRole="button"
-                  key={category.id}
-                  onPress={() => setCategoryBySection((current) => ({ ...current, [activeSection]: category.id }))}
-                  style={[styles.categoryChip, isActive && styles.activeCategoryChip]}
-                >
-                  <Text style={[styles.categoryChipText, isActive && styles.activeCategoryChipText]}>
-                    {category.label} ({category.count})
-                  </Text>
-                </Pressable>
-              );
-            })}
+            {categories.map((category) => (
+              <CategoryPill
+                active={category.id === selectedCategory}
+                key={category.id}
+                label={`${category.label} (${category.count})`}
+                onPress={() => setCategoryBySection((current) => ({ ...current, [activeSection]: category.id }))}
+              />
+            ))}
           </View>
         </ScrollView>
 
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
+        <SearchInput
           onChangeText={(value) => setSearchBySection((current) => ({ ...current, [activeSection]: value }))}
           placeholder={`Buscar em ${MEDIA_SECTION_LABELS[activeSection].toLowerCase()}`}
-          placeholderTextColor="#9CA3AF"
-          style={styles.searchInput}
           value={search}
         />
+
         <Text style={styles.count}>{filteredItems.length} de {categoryFilteredItems.length} itens nesta categoria</Text>
       </View>
 
       <FlatList
+        contentContainerStyle={styles.listContent}
         data={filteredItems}
         keyExtractor={(item) => item.id}
         keyboardShouldPersistTaps="handled"
         ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.emptyTitle}>Nada encontrado</Text>
-            <Text style={styles.emptyText}>A lista do usuário não tem itens nesta seção ou busca.</Text>
-          </View>
+          <EmptyState
+            title="Nada encontrado"
+            message="Tente outra busca ou selecione a categoria Todos."
+          />
         }
         renderItem={({ item }) => (
           <MediaListItem item={item} onPress={() => handleOpenItem(item)} />
@@ -166,95 +156,49 @@ export function ChannelListScreen({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#F8FAFC",
     flex: 1
   },
+  topArea: {
+    backgroundColor: "#F8FAFC",
+    gap: 12,
+    padding: 16
+  },
   tabs: {
-    backgroundColor: "#FFFFFF",
-    borderBottomColor: "#E5E7EB",
-    borderBottomWidth: 1,
+    backgroundColor: "#E5E7EB",
+    borderRadius: 8,
     flexDirection: "row",
-    paddingHorizontal: 8,
-    paddingVertical: 8
+    padding: 4
   },
   tab: {
     alignItems: "center",
-    borderRadius: 8,
+    borderRadius: 7,
     flex: 1,
     minHeight: 40,
     justifyContent: "center",
     paddingHorizontal: 8
   },
   activeTab: {
-    backgroundColor: "#0F766E"
+    backgroundColor: "#FFFFFF"
   },
   tabText: {
-    color: "#374151",
+    color: "#4B5563",
     fontSize: 13,
     fontWeight: "800"
   },
   activeTabText: {
-    color: "#FFFFFF"
-  },
-  searchArea: {
-    gap: 8,
-    padding: 16
+    color: "#0F766E"
   },
   categoryRow: {
     flexDirection: "row",
     gap: 8,
     paddingRight: 16
   },
-  categoryChip: {
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D1D5DB",
-    borderRadius: 8,
-    borderWidth: 1,
-    justifyContent: "center",
-    minHeight: 36,
-    paddingHorizontal: 12
-  },
-  activeCategoryChip: {
-    backgroundColor: "#CCFBF1",
-    borderColor: "#0F766E"
-  },
-  categoryChipText: {
-    color: "#374151",
-    fontSize: 13,
-    fontWeight: "700"
-  },
-  activeCategoryChipText: {
-    color: "#0F766E"
-  },
-  searchInput: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D1D5DB",
-    borderRadius: 8,
-    borderWidth: 1,
-    color: "#111827",
-    fontSize: 15,
-    minHeight: 46,
-    paddingHorizontal: 12
-  },
   count: {
     color: "#6B7280",
     fontSize: 13
   },
-  empty: {
-    alignItems: "center",
-    padding: 28
-  },
-  emptyTitle: {
-    color: "#111827",
-    fontSize: 17,
-    fontWeight: "800"
-  },
-  emptyText: {
-    color: "#6B7280",
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 6,
-    textAlign: "center"
+  listContent: {
+    paddingBottom: 20
   }
 });
