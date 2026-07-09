@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ErrorMessage } from "../components/ErrorMessage";
 import { LegalNotice } from "../components/LegalNotice";
 import type { MediaItem } from "../types/media";
 import type { RootStackParamList } from "../types/navigation";
@@ -58,13 +59,13 @@ function resolvePlayerSource(item: MediaItem): PlayerSourceInfo {
   const isXtreamSeries = /\/series\/[^/]+\/[^/]+\/[^/?#]+/i.test(streamUrl);
 
   if (item.section === "live" && isXtreamLive) {
-    const primaryUrl = replaceExtension(streamUrl, "ts");
-    const fallbackUrl = replaceExtension(streamUrl, "m3u8");
+    const fallbackExtension = lowerUrl.includes(".m3u8") ? "ts" : "m3u8";
+    const fallbackUrl = replaceExtension(streamUrl, fallbackExtension);
 
     return {
-      primaryUrl,
-      fallbackUrl: fallbackUrl !== primaryUrl ? fallbackUrl : undefined,
-      technicalHint: "Xtream live detectado. URL esperada: /live/USERNAME/PASSWORD/STREAM_ID.ts"
+      primaryUrl: streamUrl,
+      fallbackUrl: fallbackUrl !== streamUrl ? fallbackUrl : undefined,
+      technicalHint: "Xtream live detectado. Tentando URL original primeiro e fallback alternativo se necessario."
     };
   }
 
@@ -108,16 +109,32 @@ export function PlayerScreen({ route }: Props) {
   const sourceInfo = useMemo(() => resolvePlayerSource(item), [item]);
   const isLiveStream = item.section === "live" || /\/live\/[^/]+\/[^/]+\/[^/?#]+/i.test(activeUrl);
 
-  useEffect(() => {
+  function clearLoadingTimer() {
     if (liveLoadedTimerRef.current) {
       clearTimeout(liveLoadedTimerRef.current);
       liveLoadedTimerRef.current = null;
     }
+  }
+
+  function startLoadingGraceTimer() {
+    clearLoadingTimer();
+    liveLoadedTimerRef.current = setTimeout(() => {
+      setShowLoadingOverlay(false);
+      liveLoadedTimerRef.current = null;
+    }, 3000);
+  }
+
+  useEffect(() => {
+    clearLoadingTimer();
 
     setActiveUrl(sourceInfo.primaryUrl);
     setHasTriedFallback(false);
     setError(null);
     setShowLoadingOverlay(true);
+
+    if (item.section === "live") {
+      startLoadingGraceTimer();
+    }
 
     console.log("[Kael Player] Player item:", {
       id: item.id,
@@ -132,10 +149,7 @@ export function PlayerScreen({ route }: Props) {
     }
 
     return () => {
-      if (liveLoadedTimerRef.current) {
-        clearTimeout(liveLoadedTimerRef.current);
-        liveLoadedTimerRef.current = null;
-      }
+      clearLoadingTimer();
     };
   }, [item, sourceInfo]);
 
@@ -148,27 +162,17 @@ export function PlayerScreen({ route }: Props) {
       return;
     }
 
-    if (!status.isBuffering || (status.isPlaying && status.positionMillis > 0)) {
+    if (status.isPlaying || !status.isBuffering) {
       setShowLoadingOverlay(false);
-
-      if (liveLoadedTimerRef.current) {
-        clearTimeout(liveLoadedTimerRef.current);
-        liveLoadedTimerRef.current = null;
-      }
-
+      clearLoadingTimer();
       return;
-    }
-
-    if (isLiveStream && status.isPlaying && !liveLoadedTimerRef.current) {
-      liveLoadedTimerRef.current = setTimeout(() => {
-        setShowLoadingOverlay(false);
-        liveLoadedTimerRef.current = null;
-      }, 2500);
     }
   }
 
   function handlePlayerError(nativeError: string) {
-      console.log("[Kael Player] Player onError:", {
+    clearLoadingTimer();
+
+    console.log("[Kael Player] Player onError:", {
       error: sanitizeLogText(nativeError),
       activeUrl: maskStreamUrlForLog(activeUrl),
       section: item.section,
@@ -181,6 +185,9 @@ export function PlayerScreen({ route }: Props) {
       setActiveUrl(sourceInfo.fallbackUrl);
       setError(null);
       setShowLoadingOverlay(true);
+      if (isLiveStream) {
+        startLoadingGraceTimer();
+      }
       return;
     }
 
@@ -190,6 +197,9 @@ export function PlayerScreen({ route }: Props) {
   async function handleReplay() {
     setError(null);
     setShowLoadingOverlay(true);
+    if (isLiveStream) {
+      startLoadingGraceTimer();
+    }
     await videoRef.current?.replayAsync();
   }
 
@@ -220,8 +230,8 @@ export function PlayerScreen({ route }: Props) {
       </View>
 
       <View style={styles.details}>
-        <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.meta}>{item.groupTitle || "Sem categoria"}</Text>
+        <Text numberOfLines={2} style={styles.title}>{item.name}</Text>
+        <Text numberOfLines={1} style={styles.meta}>{item.groupTitle || "Sem categoria"}</Text>
 
         <View style={styles.actions}>
           <Pressable accessibilityRole="button" onPress={handleReplay} style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
@@ -229,7 +239,7 @@ export function PlayerScreen({ route }: Props) {
           </Pressable>
         </View>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? <ErrorMessage message={error} /> : null}
         <LegalNotice />
       </View>
     </SafeAreaView>
@@ -252,22 +262,25 @@ const styles = StyleSheet.create({
   },
   loadingOverlay: {
     alignItems: "center",
-    bottom: 0,
+    backgroundColor: "rgba(17, 24, 39, 0.82)",
+    borderRadius: 8,
+    flexDirection: "row",
     gap: 8,
     justifyContent: "center",
-    left: 0,
+    minHeight: 36,
+    paddingHorizontal: 10,
     position: "absolute",
-    right: 0,
-    top: 0,
+    right: 12,
+    top: 12,
     zIndex: 2
   },
   loadingText: {
     color: "#FFFFFF",
     fontSize: 13,
-    fontWeight: "700"
+    fontWeight: "800"
   },
   details: {
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#F8FAFC",
     flex: 1,
     gap: 12,
     padding: 18
@@ -275,7 +288,8 @@ const styles = StyleSheet.create({
   title: {
     color: "#111827",
     fontSize: 22,
-    fontWeight: "800"
+    fontWeight: "900",
+    lineHeight: 28
   },
   meta: {
     color: "#6B7280",
@@ -299,15 +313,5 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.72
-  },
-  error: {
-    backgroundColor: "#FEF2F2",
-    borderColor: "#FCA5A5",
-    borderRadius: 8,
-    borderWidth: 1,
-    color: "#991B1B",
-    fontSize: 14,
-    lineHeight: 20,
-    padding: 12
   }
 });

@@ -1,19 +1,23 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface SectionCardProps {
-  label: string;
   count: number;
+  iconLabel: string;
+  label: string;
   onPress: () => void;
 }
 
-export function SectionCard({ label, count, onPress }: SectionCardProps) {
+export function SectionCard({ count, iconLabel, label, onPress }: SectionCardProps) {
   return (
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [styles.container, pressed && styles.pressed]}
     >
-      <View>
+      <View style={styles.icon}>
+        <Text style={styles.iconText}>{iconLabel}</Text>
+      </View>
+      <View style={styles.content}>
         <Text style={styles.label}>{label}</Text>
         <Text style={styles.count}>{count} itens</Text>
       </View>
@@ -30,18 +34,34 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
-    minHeight: 72,
-    paddingHorizontal: 16,
-    paddingVertical: 14
+    minHeight: 76,
+    paddingHorizontal: 14,
+    paddingVertical: 12
   },
   pressed: {
     opacity: 0.72
   },
+  icon: {
+    alignItems: "center",
+    backgroundColor: "#CCFBF1",
+    borderRadius: 8,
+    height: 44,
+    justifyContent: "center",
+    marginRight: 12,
+    width: 44
+  },
+  iconText: {
+    color: "#0F766E",
+    fontSize: 13,
+    fontWeight: "900"
+  },
+  content: {
+    flex: 1
+  },
   label: {
     color: "#111827",
     fontSize: 17,
-    fontWeight: "700"
+    fontWeight: "800"
   },
   count: {
     color: "#6B7280",
@@ -50,7 +70,7 @@ const styles = StyleSheet.create({
   },
   arrow: {
     color: "#0F766E",
-    fontSize: 28,
-    lineHeight: 28
+    fontSize: 26,
+    lineHeight: 26
   }
 });

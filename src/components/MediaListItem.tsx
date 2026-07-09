@@ -8,6 +8,8 @@ interface MediaListItemProps {
 }
 
 export function MediaListItem({ item, onPress }: MediaListItemProps) {
+  const fallbackLabel = item.name.slice(0, 2).toUpperCase();
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -18,7 +20,7 @@ export function MediaListItem({ item, onPress }: MediaListItemProps) {
         <Image source={{ uri: item.tvgLogo }} style={styles.logo} />
       ) : (
         <View style={styles.logoPlaceholder}>
-          <Text style={styles.logoText}>{item.name.slice(0, 1).toUpperCase()}</Text>
+          <Text style={styles.logoText}>{fallbackLabel}</Text>
         </View>
       )}
 
@@ -27,7 +29,7 @@ export function MediaListItem({ item, onPress }: MediaListItemProps) {
           {item.name}
         </Text>
         <Text numberOfLines={1} style={styles.group}>
-          {item.groupTitle || "Sem categoria"}
+          {item.categoryName || item.groupTitle || "Sem categoria"}
         </Text>
       </View>
     </Pressable>
@@ -38,11 +40,14 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    borderBottomColor: "#E5E7EB",
-    borderBottomWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 8,
+    borderWidth: 1,
     flexDirection: "row",
+    marginHorizontal: 16,
+    marginBottom: 10,
     minHeight: 76,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingVertical: 10
   },
   pressed: {
@@ -50,36 +55,37 @@ const styles = StyleSheet.create({
   },
   logo: {
     backgroundColor: "#F3F4F6",
-    borderRadius: 6,
-    height: 48,
+    borderRadius: 8,
+    height: 50,
     marginRight: 12,
-    width: 48
+    width: 50
   },
   logoPlaceholder: {
     alignItems: "center",
-    backgroundColor: "#CCFBF1",
-    borderRadius: 6,
-    height: 48,
+    backgroundColor: "#E0F2FE",
+    borderRadius: 8,
+    height: 50,
     justifyContent: "center",
     marginRight: 12,
-    width: 48
+    width: 50
   },
   logoText: {
     color: "#0F766E",
-    fontSize: 18,
-    fontWeight: "800"
+    fontSize: 15,
+    fontWeight: "900"
   },
   content: {
     flex: 1
   },
   name: {
     color: "#111827",
-    fontSize: 16,
-    fontWeight: "700"
+    fontSize: 15,
+    fontWeight: "800",
+    lineHeight: 20
   },
   group: {
     color: "#6B7280",
     fontSize: 13,
-    marginTop: 4
+    marginTop: 5
   }
 });

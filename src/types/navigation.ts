@@ -1,7 +1,19 @@
 import type { MediaItem, MediaSection, SectionedMedia } from "./media";
 
 export type RootStackParamList = {
-  Home: undefined;
+  Setup: undefined;
+  Home: {
+    itemsBySection: SectionedMedia;
+  };
+  Section: {
+    itemsBySection: SectionedMedia;
+    section: MediaSection;
+  };
+  TitleDetails: {
+    item: MediaItem;
+    relatedItems: MediaItem[];
+    itemsBySection: SectionedMedia;
+  };
   ChannelList: {
     itemsBySection: SectionedMedia;
     initialSection?: MediaSection;
@@ -11,6 +23,8 @@ export type RootStackParamList = {
   };
   SeriesDetails: {
     series: MediaItem;
+    relatedItems?: MediaItem[];
+    itemsBySection?: SectionedMedia;
   };
   Settings: undefined;
 };

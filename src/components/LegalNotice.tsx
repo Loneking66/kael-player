@@ -12,15 +12,15 @@ export function LegalNotice() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ECFEFF",
-    borderColor: "#67E8F9",
+    backgroundColor: "#F0FDFA",
+    borderColor: "#CCFBF1",
     borderRadius: 8,
     borderWidth: 1,
-    padding: 12
+    padding: 10
   },
   text: {
-    color: "#155E75",
-    fontSize: 13,
-    lineHeight: 18
+    color: "#0F766E",
+    fontSize: 12,
+    lineHeight: 17
   }
 });
